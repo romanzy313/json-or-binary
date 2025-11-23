@@ -1,37 +1,45 @@
+const discriminatedTypeName = "type" as const;
+const discriminatedValueName = "value" as const;
 const binarySplitter = '"' as const;
-const discriminatedName = "type" as const;
 const jsonStartChar = "{".charCodeAt(0);
 const binaryStartChar = binarySplitter.charCodeAt(0);
 
+/**
+ * Discriminated value with a type field and arbitrary value.
+ */
 export type AnyDiscriminatedValue = {
-  [discriminatedName]: string;
-  value: unknown;
+  [discriminatedTypeName]: string;
+  [discriminatedValueName]: unknown;
 };
 
+/**
+ * Serializes a discriminated value to binary format.
+ * @throws Error if type field contains the `"` character
+ */
 export function binarize<T extends AnyDiscriminatedValue>(
-  dValue: T,
+  value: T,
 ): Uint8Array {
-  if (dValue.type.includes(binarySplitter)) {
+  if (value.type.includes(binarySplitter)) {
     throw new Error(`Character '${binarySplitter}' is not allowed in type`);
   }
 
-  // check if value is of binary type like Uint8Array
-
-  if (dValue.value instanceof Uint8Array) {
-    // encode it like ^{type}^{binaryValue}
+  if (value.value instanceof Uint8Array) {
+    // encode it like "{type}"{binaryValue}
     return new Uint8Array([
-      ...new TextEncoder().encode(
-        binarySplitter + dValue.type + binarySplitter,
-      ),
-      ...dValue.value,
+      ...new TextEncoder().encode(binarySplitter + value.type + binarySplitter),
+      ...value.value,
     ]);
   }
 
-  const stringified = JSON.stringify(dValue);
+  const stringified = JSON.stringify(value);
 
   return new TextEncoder().encode(stringified);
 }
 
+/**
+ * Parses binary data back to discriminated value.
+ * @throws MalformedBinaryDataError if data is invalid
+ */
 export function parse<T extends AnyDiscriminatedValue>(data: Uint8Array): T {
   // minimum payload binary size is '"a"'
   if (data.byteLength < 3) {
@@ -49,7 +57,10 @@ export function parse<T extends AnyDiscriminatedValue>(data: Uint8Array): T {
       if (data[i] === binaryStartChar) {
         const type = new TextDecoder().decode(data.slice(1, i));
         const value = data.slice(i + 1);
-        return { [discriminatedName]: type, value } as T;
+        return {
+          [discriminatedTypeName]: type,
+          [discriminatedValueName]: value,
+        } as T;
       }
     }
     throw new MalformedBinaryDataError("Invalid discriminator");
