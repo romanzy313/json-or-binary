@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": ["src/**/*.test.ts"],
+  "compilerOptions": {
+    "outDir": "./dist"
+    // "emitDeclarationOnly": false,
+    // "declaration": true,
+    // "declarationMap": true,
+    // "sourceMap": true,
+    // "isolatedModules": true
+    // "noUncheckedSideEffectImports": true,
+    // "moduleDetection": "force",
+    // "skipLibCheck": true
+  }
+}

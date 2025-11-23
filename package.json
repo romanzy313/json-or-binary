@@ -1,0 +1,20 @@
+{
+  "name": "json-or-binary",
+  "version": "0.0.0",
+  "type": "module",
+  "author": "Roman Volovoy",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/romanzy313/json-or-binary.git"
+  },
+  "scripts": {
+    "dev": "vitest",
+    "test": "vitest --run",
+    "build": "rm -rf ./dist && tsc --project tsconfig.build.json"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.13"
+  }
+}
