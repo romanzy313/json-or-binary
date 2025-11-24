@@ -15,6 +15,10 @@ export type AnyDiscriminatedValue = {
  * @throws Error if type field contains the `"` character
  */
 export function encode<T extends AnyDiscriminatedValue>(value: T): Uint8Array {
+  if (!value.type) {
+    throw new Error("Type field is required");
+  }
+
   if (value.type.includes(binarySplitter)) {
     throw new Error(`Character '${binarySplitter}' is not allowed in type`);
   }
@@ -46,11 +50,20 @@ export function decode<T extends AnyDiscriminatedValue>(data: Uint8Array): T {
 
   if (first === jsonStartChar) {
     // its just json
-    return JSON.parse(new TextDecoder().decode(data)) as T;
+    const json = JSON.parse(new TextDecoder().decode(data)) as T;
+    if (!json["type"]) {
+      throw new MalformedBinaryDataError("Invalid empty type");
+    }
+    // TODO: also check for the presence of value? like key in
+
+    return json;
   } else if (first === binaryStartChar) {
     // read the type until another '"'
     for (let i = 1; i < data.length; i++) {
       if (data[i] === binaryStartChar) {
+        if (i === 1) {
+          throw new MalformedBinaryDataError("Invalid empty type");
+        }
         const type = new TextDecoder().decode(data.slice(1, i));
         const value = data.slice(i + 1);
         return {

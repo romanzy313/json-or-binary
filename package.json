@@ -32,11 +32,12 @@
   },
   "scripts": {
     "dev": "vitest",
-    "test": "vitest --run",
+    "test": "vitest --run --coverage",
     "build": "rm -rf ./dist && tsc --project tsconfig.build.json",
     "prepare": "pnpm build"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "4.0.13",
     "typescript": "^5.9.3",
     "vitest": "^4.0.13"
   },

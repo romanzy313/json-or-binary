@@ -55,7 +55,25 @@ it("encodes and decodes binary with 0 length", () => {
   });
 });
 
-it("handles invalid input with quote", () => {
+it("handles empty type", () => {
+  expect(() =>
+    encode({ type: "", value: {} }),
+  ).toThrowErrorMatchingInlineSnapshot(`[Error: Type field is required]`);
+
+  expect(() =>
+    decode(new TextEncoder().encode(`{"type":"","value":{}}`)),
+  ).toThrowErrorMatchingInlineSnapshot(
+    `[MalformedBinaryDataError: Invalid empty type]`,
+  );
+
+  expect(() =>
+    decode(new TextEncoder().encode(`""whatever`)),
+  ).toThrowErrorMatchingInlineSnapshot(
+    `[MalformedBinaryDataError: Invalid empty type]`,
+  );
+});
+
+it("encode handles invalid input with quote", () => {
   // expect this to throw an error
   expect(() =>
     encode({
@@ -67,7 +85,16 @@ it("handles invalid input with quote", () => {
   );
 });
 
-it("handles invalid binary data length", () => {
+it("decode handles invalid input first character", () => {
+  // expect this to throw an error
+  expect(() =>
+    decode(new TextEncoder().encode(`??? whats this`)),
+  ).toThrowErrorMatchingInlineSnapshot(
+    `[MalformedBinaryDataError: Invalid starting character]`,
+  );
+});
+
+it("decode handles invalid binary data length", () => {
   // expect this to throw an error
   expect(() =>
     decode(new TextEncoder().encode(`"`)),
@@ -76,7 +103,7 @@ it("handles invalid binary data length", () => {
   );
 });
 
-it("handles malformed binary data without closing type", () => {
+it("decode handles malformed binary data without closing type", () => {
   // expect this to throw an error
   expect(() =>
     decode(new TextEncoder().encode(`"whatever is not closed`)),
