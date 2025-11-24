@@ -1,7 +1,29 @@
 {
   "name": "json-or-binary",
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Simply serialize discriminated unions into a binary format.",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "keywords": [
+    "binary",
+    "json",
+    "serialize",
+    "encode",
+    "discriminated-union",
+    "uint8array",
+    "codec"
+  ],
   "author": "Roman Volovoy",
   "license": "MIT",
   "repository": {
@@ -16,5 +38,6 @@
   "devDependencies": {
     "typescript": "^5.9.3",
     "vitest": "^4.0.13"
-  }
+  },
+  "packageManager": "pnpm@10.23.0"
 }

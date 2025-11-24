@@ -1,5 +1,5 @@
 import { it, expect } from "vitest";
-import { binarize, parse } from "./index";
+import { encode, decode } from "./index";
 
 type TestType =
   | {
@@ -12,26 +12,26 @@ type TestType =
     };
 
 it("encodes and decodes json", () => {
-  const binary = binarize<TestType>({ type: "json", value: "hello, world" });
+  const binary = encode<TestType>({ type: "json", value: "hello, world" });
 
   expect(binary).toEqual(
     new TextEncoder().encode(`{"type":"json","value":"hello, world"}`),
   );
 
-  const parsed = parse<TestType>(binary);
+  const parsed = decode<TestType>(binary);
 
   expect(parsed).toStrictEqual({ type: "json", value: "hello, world" });
 });
 
 it("encodes and decodes binary", () => {
-  const binary = binarize<TestType>({
+  const binary = encode<TestType>({
     type: "binary",
     value: new TextEncoder().encode(`42`),
   });
 
   expect(binary).toEqual(new TextEncoder().encode(`"binary"42`));
 
-  const parsed = parse<TestType>(binary);
+  const parsed = decode<TestType>(binary);
 
   expect(parsed).toStrictEqual({
     type: "binary",
@@ -40,14 +40,14 @@ it("encodes and decodes binary", () => {
 });
 
 it("encodes and decodes binary with 0 length", () => {
-  const binary = binarize<TestType>({
+  const binary = encode<TestType>({
     type: "binary",
     value: new Uint8Array(),
   });
 
   expect(binary).toEqual(new TextEncoder().encode(`"binary"`));
 
-  const parsed = parse<TestType>(binary);
+  const parsed = decode<TestType>(binary);
 
   expect(parsed).toStrictEqual({
     type: "binary",
@@ -58,7 +58,7 @@ it("encodes and decodes binary with 0 length", () => {
 it("handles invalid input with quote", () => {
   // expect this to throw an error
   expect(() =>
-    binarize({
+    encode({
       type: 'invalid"',
       value: "whatever",
     }),
@@ -70,7 +70,7 @@ it("handles invalid input with quote", () => {
 it("handles invalid binary data length", () => {
   // expect this to throw an error
   expect(() =>
-    parse(new TextEncoder().encode(`"`)),
+    decode(new TextEncoder().encode(`"`)),
   ).toThrowErrorMatchingInlineSnapshot(
     `[MalformedBinaryDataError: Invalid length]`,
   );
@@ -79,7 +79,7 @@ it("handles invalid binary data length", () => {
 it("handles malformed binary data without closing type", () => {
   // expect this to throw an error
   expect(() =>
-    parse(new TextEncoder().encode(`"whatever is not closed`)),
+    decode(new TextEncoder().encode(`"whatever is not closed`)),
   ).toThrowErrorMatchingInlineSnapshot(
     `[MalformedBinaryDataError: Invalid discriminator]`,
   );

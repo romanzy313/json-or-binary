@@ -14,9 +14,7 @@ export type AnyDiscriminatedValue = {
  * Serializes a discriminated value to binary format.
  * @throws Error if type field contains the `"` character
  */
-export function binarize<T extends AnyDiscriminatedValue>(
-  value: T,
-): Uint8Array {
+export function encode<T extends AnyDiscriminatedValue>(value: T): Uint8Array {
   if (value.type.includes(binarySplitter)) {
     throw new Error(`Character '${binarySplitter}' is not allowed in type`);
   }
@@ -38,7 +36,7 @@ export function binarize<T extends AnyDiscriminatedValue>(
  * Parses binary data back to discriminated value.
  * @throws MalformedBinaryDataError if data is invalid
  */
-export function parse<T extends AnyDiscriminatedValue>(data: Uint8Array): T {
+export function decode<T extends AnyDiscriminatedValue>(data: Uint8Array): T {
   // minimum payload binary size is '"a"'
   if (data.byteLength < 3) {
     throw new MalformedBinaryDataError("Invalid length");
