@@ -1,5 +1,3 @@
-const discriminatedTypeName = "type" as const;
-const discriminatedValueName = "value" as const;
 const binarySplitter = '"' as const;
 const jsonStartChar = "{".charCodeAt(0);
 const binaryStartChar = binarySplitter.charCodeAt(0);
@@ -8,8 +6,8 @@ const binaryStartChar = binarySplitter.charCodeAt(0);
  * Discriminated value with a type field and arbitrary value.
  */
 export type AnyDiscriminatedValue = {
-  [discriminatedTypeName]: string;
-  [discriminatedValueName]: unknown;
+  type: string;
+  value: unknown;
 };
 
 /**
@@ -58,8 +56,8 @@ export function parse<T extends AnyDiscriminatedValue>(data: Uint8Array): T {
         const type = new TextDecoder().decode(data.slice(1, i));
         const value = data.slice(i + 1);
         return {
-          [discriminatedTypeName]: type,
-          [discriminatedValueName]: value,
+          type,
+          value,
         } as T;
       }
     }
