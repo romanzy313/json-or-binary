@@ -1,7 +1,7 @@
 {
   "name": "json-or-binary",
   "version": "0.9.9",
-  "description": "Simply serialize discriminated unions into a binary format.",
+  "description": "Simply encode and decode discriminated unions into a binary format",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -34,7 +34,7 @@
     "dev": "vitest",
     "test": "vitest --run --coverage",
     "build": "rm -rf ./dist && tsc --project tsconfig.build.json",
-    "prepare": "pnpm build"
+    "prepare": "pnpm test && pnpm build"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "4.0.13",

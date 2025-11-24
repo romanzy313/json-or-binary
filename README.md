@@ -1,6 +1,6 @@
 # json-or-binary
 
-Simply serialize discriminated unions into a binary format.
+Simply encode and decode discriminated unions into a binary format.
 
 ## Installation
 
